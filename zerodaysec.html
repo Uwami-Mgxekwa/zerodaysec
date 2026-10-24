@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZeroDaySec | Find it before they do</title>
+<meta name="description" content="ZeroDaySec scans your systems for vulnerabilities, protects your infrastructure and trains your staff to stop attacks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--ink:#050506;--steel:#15161a;--line:#26282e;
+  --silver:#c3c7cf;--silver-dim:#7c818c;--white:#f4f5f7;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--silver);font-family:var(--body);font-weight:300;line-height:1.65;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--white);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.9;color:var(--white);letter-spacing:.01em}
+h2{font-size:clamp(3rem,8vw,7.5rem)}
+.silver{background:linear-gradient(100deg,#6d717b 0%,#f4f5f7 35%,#8d919b 55%,#e4e6ea 80%,#6d717b 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 7s linear infinite}
+@keyframes sheen{to{background-position:-250% 0}}
+/* progress rail */
+#rail{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--white);transform-origin:0 50%;transform:scaleX(0);z-index:60;mix-blend-mode:difference}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px 28px;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.solid{background:rgba(0,0,0,.82);backdrop-filter:blur(10px);border-color:var(--line)}
+.logo{font-family:var(--display);font-weight:900;font-size:1.7rem;color:var(--white);letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.logo i{width:12px;height:12px;background:var(--white);display:block;clip-path:polygon(50% 0,100% 25%,100% 70%,50% 100%,0 70%,0 25%)}
+nav ul{display:flex;gap:34px;list-style:none;font-size:.9rem}
+nav ul a{position:relative;padding:4px 0}
+nav ul a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--white);transform:scaleX(0);transform-origin:right;transition:transform .35s}
+nav ul a:hover::after{transform:scaleX(1);transform-origin:left}
+.btn{display:inline-block;border:1px solid var(--silver);padding:14px 30px;font-weight:500;color:var(--white);background:transparent;cursor:pointer;font:500 .95rem var(--body);position:relative;overflow:hidden;transition:color .35s;isolation:isolate}
+.btn::before{content:"";position:absolute;inset:0;background:var(--white);transform:translateY(101%);transition:transform .4s cubic-bezier(.7,0,.2,1);z-index:-1}
+.btn:hover{color:var(--black)}.btn:hover::before{transform:none}
+.btn.solid{background:var(--white);color:var(--black);border-color:var(--white)}
+.btn.solid::before{background:var(--black)}.btn.solid:hover{color:var(--white)}
+/* hero */
+.hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;padding:140px 0 70px;overflow:hidden}
+#bg{position:absolute;inset:0;width:100%;height:100%}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,transparent 30%,#000 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:2;width:100%}
+.hero .tag{font-size:.9rem;color:var(--silver-dim);margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.hero .tag b{width:9px;height:9px;border-radius:50%;background:var(--white);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.15}}
+.hero h1{font-size:clamp(4rem,15.5vw,15rem);letter-spacing:.005em}
+.hero h1 span{display:block}
+.hero p.lead{max-width:540px;font-size:1.2rem;margin:34px 0 38px;color:var(--silver)}
+.hero .acts{display:flex;gap:16px;flex-wrap:wrap}
+.scrollcue{position:absolute;right:28px;bottom:70px;z-index:2;writing-mode:vertical-rl;font-size:.8rem;color:var(--silver-dim);display:flex;align-items:center;gap:14px}
+.scrollcue::after{content:"";width:1px;height:70px;background:linear-gradient(var(--white),transparent);animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+/* marquee */
+.ticker{border-block:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:16px 0;font-family:var(--display);font-size:1.5rem;font-weight:600;color:var(--silver-dim);text-transform:uppercase}
+.ticker div{display:inline-block;animation:tick 40s linear infinite;padding-left:100%}
+.ticker span{margin-right:48px}.ticker em{font-style:normal;color:var(--white);margin-right:48px}
+@keyframes tick{to{transform:translateX(-100%)}}
+/* scan sticky */
+.scan{height:360vh;position:relative}
+.scan .stick{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1.25fr 1fr;gap:60px;align-items:center}
+.cells{display:grid;grid-template-columns:repeat(16,1fr);gap:6px;perspective:1000px;transform-style:preserve-3d}
+.cell{aspect-ratio:1;border:1px solid var(--line);background:var(--ink);transition:background .3s,border-color .3s,transform .5s;position:relative}
+.cell.seen{border-color:var(--silver-dim);background:#101114}
+.cell.vuln{background:var(--white);border-color:var(--white);transform:translateZ(36px) scale(1.15);box-shadow:0 0 30px rgba(255,255,255,.7)}
+.cell.vuln::after{content:"";position:absolute;inset:30%;background:var(--black);clip-path:polygon(40% 0,60% 0,60% 60%,40% 60%,40% 0,40% 70%,60% 70%,60% 100%,40% 100%)}
+.cell.fixed{background:transparent;border-color:var(--silver);transform:none;box-shadow:none}
+.cell.fixed::after{background:var(--silver);clip-path:polygon(10% 55%,25% 40%,42% 58%,78% 18%,92% 33%,42% 88%)}
+.panel h2{font-size:clamp(3rem,6vw,5.5rem);margin-bottom:28px}
+.phase{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s,opacity .6s;opacity:.25;border-top:1px solid var(--line);padding:16px 0}
+.phase.on{grid-template-rows:1fr;opacity:1}
+.phase h3{font-size:2rem;color:var(--white)}
+.phase p{overflow:hidden;max-width:440px}
+.phase.on p{margin-top:10px}
+.stats{display:flex;gap:44px;margin-top:26px}
+.stats div{font-family:var(--display);font-size:3.4rem;color:var(--white);font-weight:800;line-height:1}
+.stats small{display:block;font:300 .8rem var(--body);color:var(--silver-dim);margin-top:6px}
+/* pillars */
+.pillars{padding:140px 0}
+.pillars>.wrap>h2{margin-bottom:80px}
+.row{display:grid;grid-template-columns:1fr 1.1fr;gap:50px;align-items:center;padding:56px 0;border-top:1px solid var(--line);position:relative;cursor:default}
+.row::before{content:"";position:absolute;inset:0;background:var(--white);transform:scaleY(0);transform-origin:bottom;transition:transform .55s cubic-bezier(.7,0,.2,1);z-index:0}
+.row:hover::before{transform:scaleY(1)}
+.row>*{position:relative;z-index:1;transition:color .4s,padding .5s}
+.row:hover h3,.row:hover p{color:var(--black)}
+.row:hover h3{padding-left:22px}.row:hover p{padding-right:22px}
+.row h3{font-size:clamp(3.5rem,9vw,8rem)}
+.row p{font-size:1.1rem;max-width:520px}
+[data-wipe]{clip-path:inset(0 100% 0 0);transition:clip-path 1.1s cubic-bezier(.7,0,.2,1)}
+[data-wipe].in{clip-path:inset(0 0 0 0)}
+/* shield */
+.shield{height:300vh;position:relative;background:linear-gradient(#000,#07080a 50%,#000)}
+.shield .stick{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.shield svg{position:absolute;height:84vh;max-width:90vw;opacity:.9}
+.shield path{fill:none;stroke:var(--silver);stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.shield .core{stroke:var(--white);stroke-width:2}
+.shield .words{position:relative;text-align:center;z-index:2;mix-blend-mode:difference}
+.shield .words h2{font-size:clamp(3.5rem,11vw,10rem);color:#fff}
+.shield .words p{font-size:1.1rem;color:#fff;margin-top:22px}
+/* training */
+.train{padding:150px 0;display:grid;gap:70px}
+.train .grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.mail{background:var(--steel);border:1px solid var(--line);font-size:.95rem;transform:rotate(-1.2deg);transition:transform .6s}
+.mail:hover{transform:none}
+.mail header{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;color:var(--silver-dim);font-size:.85rem}
+.mail .bd{padding:26px 22px}
+.mail .bd b{color:var(--white);font-weight:500}
+.mail a.fake{display:inline-block;margin:18px 0;padding:10px 20px;background:var(--silver);color:#000;font-weight:500;cursor:pointer}
+.mail .mb{display:flex;gap:12px;padding:0 22px 24px;flex-wrap:wrap}
+.mail .mb button{font:400 .85rem var(--body);padding:8px 16px;background:transparent;color:var(--silver);border:1px solid var(--line);cursor:pointer;transition:.3s}
+.mail .mb button:hover{border-color:var(--white);color:var(--white)}
+#verdict{margin:0 22px 24px;padding:16px;border:1px solid var(--white);color:var(--white);display:none}
+#verdict.show{display:block;animation:glitch .5s}
+@keyframes glitch{0%{transform:translateX(-8px);opacity:0}25%{transform:translateX(6px)}50%{transform:translateX(-3px);opacity:1}100%{transform:none}}
+.train p.copy{margin:24px 0 32px;font-size:1.1rem;max-width:480px}
+/* cta */
+.cta{padding:180px 0 120px;text-align:center;border-top:1px solid var(--line);position:relative;overflow:hidden}
+.cta h2{font-size:clamp(3.5rem,13vw,13rem);margin-bottom:46px}
+.cta .btn{padding:20px 52px;font-size:1.1rem}
+footer{border-top:1px solid var(--line);padding:34px 28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;font-size:.85rem;color:var(--silver-dim)}
+[data-d]{white-space:pre-wrap}
+@media(max-width:860px){
+  nav ul{display:none}
+  .scan .stick,.row,.train .grid{grid-template-columns:1fr}
+  .scan .stick{gap:20px;align-content:center;padding-top:60px}
+  .cells{grid-template-columns:repeat(12,1fr);gap:4px}
+  .scrollcue{display:none}.row{gap:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  [data-wipe]{clip-path:none}
+}
+</style>
+</head>
+<body>
+<div id="rail"></div>
+<nav id="nav">
+  <a href="#top" class="logo"><i></i>ZERODAYSEC</a>
+  <ul><li><a href="#scan">Scanning</a></li><li><a href="#what">Services</a></li><li><a href="#train">Training</a></li></ul>
+  <a href="#contact" class="btn">Request a scan</a>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b></b>Live threat monitoring. Active worldwide.</div>
+    <h1><span data-d>Find it</span><span class="silver" data-d>before they do.</span></h1>
+    <p class="lead">ZeroDaySec scans your systems for weaknesses, shuts them down, and trains your people to stop the attack that gets past the software.</p>
+    <div class="acts"><a href="#contact" class="btn solid">Request a scan</a><a href="#scan" class="btn">Watch a scan run</a></div>
+  </div>
+  <div class="scrollcue">Scroll</div>
+</header>
+
+<div class="ticker" aria-hidden="true"><div>
+  <span>Vulnerability scanning</span><em>/</em><span>Penetration testing</span><em>/</em><span>Incident response</span><em>/</em><span>Staff security training</span><em>/</em><span>Phishing simulation</span><em>/</em><span>24/7 monitoring</span><em>/</em>
+  <span>Vulnerability scanning</span><em>/</em><span>Penetration testing</span><em>/</em><span>Incident response</span><em>/</em><span>Staff security training</span><em>/</em>
+</div></div>
+
+<section class="scan" id="scan">
+  <div class="stick wrap">
+    <div class="cells" id="cells" aria-label="Animation of a network scan finding and fixing vulnerabilities"></div>
+    <div class="panel">
+      <h2 data-d>Scroll to scan.</h2>
+      <div class="phase on"><div><h3>Scan</h3><p>Every server, app, endpoint and cloud account is mapped and tested, the way an attacker would test it.</p></div></div>
+      <div class="phase"><div><h3>Expose</h3><p>Each weakness is ranked by how easily it can be exploited and what it would cost you if it was.</p></div></div>
+      <div class="phase"><div><h3>Close</h3><p>Our engineers patch, harden and retest until nothing is left open.</p></div></div>
+      <div class="stats"><div><span id="nHosts">0</span><small>Systems scanned</small></div><div><span id="nVuln">0</span><small>Weaknesses open</small></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pillars" id="what">
+  <div class="wrap">
+    <h2 data-d>Three ways we protect you</h2>
+    <div class="row"><h3 data-wipe>Scan</h3><p>Continuous vulnerability scanning and penetration testing across your networks, applications and cloud. You get a clear list of what is exposed and how to fix it.</p></div>
+    <div class="row"><h3 data-wipe>Protect</h3><p>Hardening, monitoring and incident response. If something gets in, our team contains it, removes it and tells you exactly what happened.</p></div>
+    <div class="row"><h3 data-wipe>Train</h3><p>Your staff are your largest attack surface. We teach them to spot phishing, social engineering and bad habits before an attacker does.</p></div>
+    <div style="border-top:1px solid var(--line)"></div>
+  </div>
+</section>
+
+<section class="shield" aria-label="Shield drawing itself">
+  <div class="stick">
+    <svg viewBox="0 0 200 240" aria-hidden="true">
+      <path id="sh1" pathLength="1" d="M100 8 L184 40 V118 C184 176 148 212 100 232 C52 212 16 176 16 118 V40 Z"/>
+      <path id="sh2" pathLength="1" d="M100 26 L168 51 V116 C168 164 138 196 100 214 C62 196 32 164 32 116 V51 Z"/>
+      <path id="sh3" pathLength="1" d="M100 8 V232 M16 118 H184 M16 40 L184 118 M184 40 L16 118" style="opacity:.35"/>
+      <path id="sh4" class="core" pathLength="1" d="M64 120 L92 148 L140 92"/>
+    </svg>
+    <div class="words"><h2 data-d>Zero gaps.</h2><p>Nothing here is automated theatre. Every finding is checked by a person.</p></div>
+  </div>
+</section>
+
+<section class="train" id="train">
+  <div class="wrap grid">
+    <div>
+      <h2 data-d>Train the human firewall</h2>
+      <p class="copy">Most breaches start with one person clicking one link. Our training uses real attack patterns, run as safe simulations, so your team practices before it counts.</p>
+      <a href="#contact" class="btn">Train my team</a>
+    </div>
+    <div class="mail" role="group" aria-label="Phishing simulation">
+      <header><span>From: it-support@paypa1-secure.co</span><span>09:14</span></header>
+      <div class="bd"><b>Urgent: payroll account suspended</b><br>Your salary payment failed. Verify your login within 30 minutes or your account will be locked.<br><a class="fake" id="fake" role="button" tabindex="0">Verify account now</a></div>
+      <div id="verdict"></div>
+      <div class="mb"><button id="rep">Report as phishing</button><button id="ign">Delete</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap">
+    <h2 class="silver" data-d>Attackers are scanning you right now.</h2>
+    <a class="btn solid" href="mailto:contact@zerodaysec.com" data-mag>Request a scan</a>
+  </div>
+</section>
+<footer><span>ZeroDaySec. Offensive skill, defensive purpose.</span><span>contact@zerodaysec.com</span><span>All testing performed under signed authorization.</span></footer>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const GLY='01#$%&<>/\\|{}[]=+*';
+
+/* decrypt text: each character resolves as scroll brings the element into view */
+const dec=$$('[data-d]');
+dec.forEach(e=>{e._t=e.textContent;});
+function decrypt(e,p){
+  const t=e._t,n=t.length;let out='';
+  for(let i=0;i<n;i++){
+    const c=t[i];
+    out+= c===' '?' ': (p*1.35-i/n*0.35>=1 ? c : (p<=0?'':GLY[(Math.random()*GLY.length)|0]));
+  }
+  e.textContent=out;
+}
+let rafD=0;
+function runDecrypt(){
+  dec.forEach(e=>{
+    if(reduce){e.textContent=e._t;return}
+    const r=e.getBoundingClientRect(),vh=innerHeight;
+    const p=e.closest('.hero')?e._hp||0:clamp((vh*.92-r.top)/(vh*.45));
+    if(p<1||e._done!==1){decrypt(e,p);e._done=p>=1?1:0}
+  });
+}
+/* hero decrypts on load over time */
+dec.filter(e=>e.closest('.hero')).forEach((e,i)=>{
+  const s=performance.now()+i*500;
+  (function f(now){e._hp=clamp((now-s)/1400);if(e._hp<1)requestAnimationFrame(f)})(performance.now());
+});
+
+/* wipes */
+const io=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.4});
+$$('[data-wipe]').forEach(e=>io.observe(e));
+
+/* scan grid */
+const cells=$('#cells'),N=16*9,list=[];
+const vuln=new Set();
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+while(vuln.size<17)vuln.add((rnd()*N)|0);
+for(let i=0;i<N;i++){const d=document.createElement('div');d.className='cell';cells.appendChild(d);list.push(d)}
+const scanEl=$('#scan'),phases=$$('.phase'),nH=$('#nHosts'),nV=$('#nVuln');
+function scan(){
+  const r=scanEl.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight));
+  const sp=clamp(p/.55),fp=clamp((p-.62)/.35);
+  let seen=0,open=0;
+  list.forEach((c,i)=>{
+    const col=i%16,row=(i/16)|0,order=(row*.5+col)/(16+4.5);
+    const s=sp>order,v=vuln.has(i),f=fp>order*.98&&v;
+    c.classList.toggle('seen',s);
+    c.classList.toggle('vuln',s&&v&&!f);
+    c.classList.toggle('fixed',f);
+    if(s)seen++;if(s&&v&&!f)open++;
+  });
+  nH.textContent=Math.round(seen*14.7);nV.textContent=open;
+  const idx=p<.3?0:p<.62?1:2;
+  phases.forEach((e,i)=>e.classList.toggle('on',i===idx));
+  cells.style.transform=`rotateX(${14-p*14}deg) rotateZ(${-4+p*4}deg)`;
+}
+
+/* shield draw */
+const shEl=$('.shield'),paths=['sh1','sh2','sh3','sh4'].map(id=>$('#'+id));
+paths.forEach(p=>{p.style.strokeDasharray=1;p.style.strokeDashoffset=1});
+function shield(){
+  const r=shEl.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight));
+  paths.forEach((el,i)=>{el.style.strokeDashoffset=1-clamp((p-i*.14)/.45)});
+  $('.shield svg').style.transform=`scale(${.7+p*.5}) rotateY(${(.5-p)*40}deg)`;
+}
+
+/* hero canvas: dot field with scan beam */
+const cv=$('#bg'),ctx=cv.getContext('2d');let W,H,mx=-999,my=-999,dpr=Math.min(devicePixelRatio||1,2);
+function size(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+size();addEventListener('resize',size);
+addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+function hero(t){
+  if(scrollY>innerHeight*1.2){requestAnimationFrame(hero);return}
+  ctx.clearRect(0,0,W,H);
+  const g=34,beam=((t/2600)%1.4)*H*1.2-H*.1,sy=scrollY*.25;
+  for(let y=-g;y<H+g;y+=g){for(let x=0;x<W+g;x+=g){
+    const yy=y+(sy%g),dm=Math.hypot(x-mx,yy-my),db=Math.abs(yy-beam);
+    const a=clamp(.1+(1-dm/170)*.9,.1,1)*1+clamp(1-db/90)*.9;
+    const s=1+clamp(1-dm/170)*2.2+clamp(1-db/60)*1.6;
+    ctx.fillStyle=`rgba(210,214,222,${clamp(a,.08,1)*.55})`;
+    ctx.fillRect(x-s/2,yy-s/2,s,s);
+  }}
+  const gr=ctx.createLinearGradient(0,beam-60,0,beam+2);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(1,'rgba(255,255,255,.35)');
+  ctx.fillStyle=gr;ctx.fillRect(0,beam-60,W,62);
+  requestAnimationFrame(hero);
+}
+if(!reduce)requestAnimationFrame(hero);
+
+/* magnetic cta */
+const m=$('[data-mag]');
+addEventListener('pointermove',e=>{
+  const r=m.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy);
+  m.style.transform=d<180?`translate(${dx*.25}px,${dy*.35}px)`:'';
+});
+
+/* phishing sim */
+const v=$('#verdict');
+function say(t){v.textContent=t;v.classList.remove('show');void v.offsetWidth;v.classList.add('show')}
+$('#fake').onclick=()=>say('Compromised. The sender domain is "paypa1", not your company. Real attackers would now hold your credentials.');
+$('#fake').onkeydown=e=>{if(e.key==='Enter')$('#fake').click()};
+$('#rep').onclick=()=>say('Correct. Urgent threats, a spoofed sender and a login link are the three warning signs. Reported and blocked.');
+$('#ign').onclick=()=>say('Safe, but unreported. The next person may click. Always report phishing to security.');
+
+/* nav + progress + master scroll loop */
+const nav=$('#nav'),rail=$('#rail');
+let tick=false;
+function onScroll(){
+  nav.classList.toggle('solid',scrollY>40);
+  rail.style.transform=`scaleX(${scrollY/(document.documentElement.scrollHeight-innerHeight)})`;
+  scan();shield();runDecrypt();tick=false;
+}
+addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(onScroll)}},{passive:true});
+addEventListener('resize',onScroll);
+(function loop(){ if(!reduce&&dec.some(e=>e.closest('.hero')&&e._hp<1))runDecrypt();requestAnimationFrame(loop)})();
+onScroll();
+})();
+</script>
+</body>
+</html>
